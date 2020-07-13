@@ -22,7 +22,7 @@ type Item
 type Kind
     = Scroll
     | Herb
-    | Ring
+    | Bracelet
     | Wand
     | Vase
 
@@ -93,8 +93,8 @@ kindToString kind_ =
         Herb ->
             "草"
 
-        Ring ->
-            "指輪"
+        Bracelet ->
+            "腕輪"
 
         Wand ->
             "杖"

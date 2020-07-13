@@ -87,9 +87,9 @@ init flags =
                       , toImpl = \_ -> ItemKindFilter Herb
                       , enabled = False
                       }
-                    , { id = FilterRings
+                    , { id = FilterBracelets
                       , displayName = "指輪"
-                      , toImpl = \_ -> ItemKindFilter Ring
+                      , toImpl = \_ -> ItemKindFilter Bracelet
                       , enabled = False
                       }
                     , { id = FilterWands
@@ -132,7 +132,7 @@ type FilterItemID
     | FilterNonIdentifiedItems
     | FilterScrolls
     | FilterHerbs
-    | FilterRings
+    | FilterBracelets
     | FilterWands
     | FilterVases
     | FilterUrahakuItems
