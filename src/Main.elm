@@ -3,7 +3,6 @@ port module Main exposing (Model, Msg(..), init, main, update, view)
 import Browser
 import Css exposing (..)
 import Dungeon exposing (Dungeon(..))
-import ExperienceTable
 import Filter exposing (Filter(..))
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
@@ -113,7 +112,6 @@ init flags =
 
 type Page
     = PageItemInventory
-    | PageExperienceTable
 
 
 type alias FilterIngredients =
@@ -240,9 +238,6 @@ view model =
         , case model.currentPage of
             PageItemInventory ->
                 viewItemInventory model
-
-            PageExperienceTable ->
-                viewExperienceTable model
         ]
 
 
@@ -255,17 +250,10 @@ viewHeader model =
 
             else
                 "nav-item"
-
-        experienceLinkClass =
-            if model.currentPage == PageExperienceTable then
-                "nav-item active"
-
-            else
-                "nav-item"
     in
     nav [ class "navbar navbar-dark bg-dark" ]
         [ span [ class "navbar-brand" ]
-            [ text "トルネコ3ツール" ]
+            [ text "Asuka Webapp" ]
         , button [ attribute "aria-controls" "navbarSupportedContent", attribute "aria-expanded" "false", attribute "aria-label" "Toggle navigation", class "navbar-toggler", attribute "data-target" "#navbarSupportedContent", attribute "data-toggle" "collapse", type_ "button" ]
             [ span [ class "navbar-toggler-icon" ]
                 []
@@ -276,10 +264,6 @@ viewHeader model =
                     [ a [ class "nav-link", href "#", onClick (ChangePage PageItemInventory) ]
                         [ text "アイテム検索/管理"
                         ]
-                    ]
-                , li [ class experienceLinkClass ]
-                    [ a [ class "nav-link", href "#", onClick (ChangePage PageExperienceTable) ]
-                        [ text "経験値表" ]
                     ]
                 ]
             ]
@@ -420,53 +404,6 @@ viewItemRow model item =
                 ]
                 []
             ]
-        ]
-
-
-viewExperienceTable : Model -> Html Msg
-viewExperienceTable model =
-    let
-        torunekoTable =
-            ExperienceTable.toruneko
-
-        poporoTable =
-            ExperienceTable.poporo
-
-        zipped =
-            List.map2 Tuple.pair torunekoTable poporoTable
-                |> List.indexedMap Tuple.pair
-                |> List.map (Tuple.mapFirst (\i -> i + 1))
-    in
-    Html.Styled.table [ class "table item-table", css [ marginTop (px 5) ] ]
-        [ thead [ class "thead-dark" ]
-            [ th [] [ text "レベル" ]
-            , th [] [ text "トルネコ" ]
-            , th [] [ text "ポポロ" ]
-            ]
-        , tbody []
-            (List.map viewExperienceRow zipped)
-        ]
-
-
-viewExperienceRow : ( Int, ( Int, Int ) ) -> Html Msg
-viewExperienceRow data =
-    let
-        level =
-            Tuple.first data
-
-        exp =
-            Tuple.second data
-
-        toruneko =
-            Tuple.first exp
-
-        poporo =
-            Tuple.second exp
-    in
-    tr []
-        [ td [] [ text (String.fromInt level) ]
-        , td [] [ text (String.fromInt toruneko) ]
-        , td [] [ text (String.fromInt poporo) ]
         ]
 
 
