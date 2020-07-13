@@ -2,6 +2,7 @@ port module Main exposing (Model, Msg(..), init, main, update, view)
 
 import Browser
 import Css exposing (..)
+import Dungeon exposing (Dungeon(..))
 import ExperienceTable
 import Filter exposing (Filter(..))
 import Html.Styled exposing (..)
@@ -53,6 +54,15 @@ init flags =
       , identifiedItemNames = flags.identifiedItemNames
       , filterGroups =
             [ { id = IdentifiedStateFilters
+              , filterItems =
+                    [ { id = FilterAnotherWorldItems
+                      , displayName = "異世界"
+                      , toImpl = \ingredients -> DungeonFilter AnotherWorld
+                      , enabled = False
+                      }
+                    ]
+              }
+            , { id = IdentifiedStateFilters
               , filterItems =
                     [ { id = FilterIdentifiedItems
                       , displayName = "識別済"
@@ -127,6 +137,7 @@ type FilterItemID
     | FilterRings
     | FilterWands
     | FilterVases
+    | FilterAnotherWorldItems
 
 
 type alias FilterGroup =
@@ -138,6 +149,7 @@ type alias FilterGroup =
 type FilterGroupID
     = IdentifiedStateFilters
     | ItemKindFilters
+    | DungeonFilters
 
 
 
