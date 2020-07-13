@@ -273,12 +273,9 @@ viewHeader model =
 viewCredit : Html Msg
 viewCredit =
     div [ class "alert alert-dismissible alert-info" ]
-        [ text "本アプリは2020/07/10時点での"
-        , a [ href "https://www.pegasusknight.com/mb/tr3/index.html" ]
-            [ text "www.pegasusknight.com" ]
-        , text "様及び"
-        , a [ href "https://w.atwiki.jp/toruneko3/" ]
-            [ text "トルネコの大冒険３異世界攻略wiki" ]
+        [ text "本アプリは2020/07/13時点での"
+        , a [ href "http://asuka.lsx3.com/" ]
+            [ text "風来のシレン外伝 女剣士アスカ見参！ 攻略Wiki" ]
         , text "様の情報を元に作成されました"
         , button [ class "close", onClick HideCredit ] [ text "×" ]
         ]
