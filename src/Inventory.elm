@@ -11,11 +11,11 @@ generate =
 
 
 newItem : Kind -> String -> String -> Int -> Int -> Bool -> Item
-newItem kind name hiragana buyPrice sellPrice appearsInAnotherWorld =
+newItem kind name hiragana buyPrice sellPrice appearsInUrahaku =
     let
         dungeons =
-            if appearsInAnotherWorld then
-                [ AnotherWorld ]
+            if appearsInUrahaku then
+                [ Urahaku ]
 
             else
                 []
@@ -29,7 +29,7 @@ rings =
         gen =
             newItem Ring
     in
-    -- NOTE: the form of `gen "うけながしの指輪" "うけながしのゆびわ" 20000 10000 [AnotherWorld]` confuses elm-language-server... so using dumb True/False argument here as a workaround
+    -- NOTE: the form of `gen "うけながしの指輪" "うけながしのゆびわ" 20000 10000 [Urahaku]` confuses elm-language-server... so using dumb True/False argument here as a workaround
     [ gen "うけながしの指輪" "うけながしのゆびわ" 20000 10000 False
     , gen "きれいな指輪" "きれいなゆびわ" 8000 3000 True
     , gen "しあわせの指輪" "しあわせのゆびわ" 4000 2000 True

@@ -2,11 +2,11 @@ module Dungeon exposing (Dungeon(..), toString)
 
 
 type Dungeon
-    = AnotherWorld
+    = Urahaku
 
 
 toString : Dungeon -> String
 toString d =
     case d of
-        AnotherWorld ->
-            "異世界"
+        Urahaku ->
+            "裏白"

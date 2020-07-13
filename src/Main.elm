@@ -52,11 +52,11 @@ init flags =
       , showCredit = True
       , identifiedItemNames = flags.identifiedItemNames
       , filterGroups =
-            [ { id = IdentifiedStateFilters
+            [ { id = DungeonFilters
               , filterItems =
-                    [ { id = FilterAnotherWorldItems
-                      , displayName = "異世界"
-                      , toImpl = \ingredients -> DungeonFilter AnotherWorld
+                    [ { id = FilterUrahakuItems
+                      , displayName = "裏白"
+                      , toImpl = \ingredients -> DungeonFilter Urahaku
                       , enabled = False
                       }
                     ]
@@ -135,7 +135,7 @@ type FilterItemID
     | FilterRings
     | FilterWands
     | FilterVases
-    | FilterAnotherWorldItems
+    | FilterUrahakuItems
 
 
 type alias FilterGroup =
