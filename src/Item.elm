@@ -1,7 +1,8 @@
 module Item exposing
     ( Item
     , Kind(..)
-    , buyPrice
+    , calculateBuyPrice
+    , calculateSellPrice
     , dungeons
     , exposeInternals
     , hiraganaName
@@ -9,7 +10,7 @@ module Item exposing
     , kindToString
     , name
     , new
-    , sellPrice
+    , newConsumable
     )
 
 import Dungeon exposing (Dungeon(..))
@@ -32,7 +33,10 @@ type alias Internals =
     , name : String
     , hiraganaName : String
     , buyPrice : Int
+    , buyPriceIncrement : Maybe Float
     , sellPrice : Int
+    , sellPriceIncrement : Maybe Float
+    , remaining : Maybe Int
     , dungeons : List Dungeon
     }
 
@@ -44,7 +48,25 @@ new kind_ name_ hiraganaName_ buyPrice_ sellPrice_ dungeons_ =
         , name = name_
         , hiraganaName = hiraganaName_
         , buyPrice = buyPrice_
+        , buyPriceIncrement = Nothing
         , sellPrice = sellPrice_
+        , sellPriceIncrement = Nothing
+        , remaining = Nothing
+        , dungeons = dungeons_
+        }
+
+
+newConsumable : Kind -> String -> String -> Int -> Float -> Int -> Float -> Int -> List Dungeon -> Item
+newConsumable kind_ name_ hiraganaName_ buyPrice_ buyPriceIncrement_ sellPrice_ sellPriceIncrement_ remaining_ dungeons_ =
+    Item
+        { kind = kind_
+        , name = name_
+        , hiraganaName = hiraganaName_
+        , buyPrice = buyPrice_
+        , buyPriceIncrement = Just buyPriceIncrement_
+        , sellPrice = sellPrice_
+        , sellPriceIncrement = Just sellPriceIncrement_
+        , remaining = Just remaining_
         , dungeons = dungeons_
         }
 
@@ -69,14 +91,24 @@ hiraganaName (Item i) =
     i.hiraganaName
 
 
-buyPrice : Item -> Int
-buyPrice (Item i) =
-    i.buyPrice
+calculateBuyPrice : Item -> Int
+calculateBuyPrice (Item i) =
+    case ( i.buyPriceIncrement, i.remaining ) of
+        ( Just inc, Just remaining ) ->
+            i.buyPrice + round (toFloat remaining * inc)
+
+        _ ->
+            i.buyPrice
 
 
-sellPrice : Item -> Int
-sellPrice (Item i) =
-    i.sellPrice
+calculateSellPrice : Item -> Int
+calculateSellPrice (Item i) =
+    case ( i.sellPriceIncrement, i.remaining ) of
+        ( Just inc, Just remaining ) ->
+            i.sellPrice + round (toFloat remaining * inc)
+
+        _ ->
+            i.sellPrice
 
 
 dungeons : Item -> List Dungeon

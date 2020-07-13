@@ -23,8 +23,8 @@ newItem kind name hiragana buyPrice sellPrice appearsInUrahaku =
     Item.new kind name hiragana buyPrice sellPrice dungeons
 
 
-newConsumable : Kind -> String -> String -> Int -> Float -> Int -> Float -> Bool -> Item
-newConsumable kind name hiragana buyPrice buyIncrement sellPrice sellIncrement appearsInUrahaku =
+newConsumables : ( Int, Int ) -> Kind -> String -> String -> Int -> Float -> Int -> Float -> Bool -> List Item
+newConsumables remainingRange kind name hiragana buyPrice buyIncrement sellPrice sellIncrement appearsInUrahaku =
     let
         dungeons =
             if appearsInUrahaku then
@@ -33,8 +33,11 @@ newConsumable kind name hiragana buyPrice buyIncrement sellPrice sellIncrement a
             else
                 []
     in
-    -- TODO: Take remaining use into account (杖残数 / 壺容量)
-    Item.new kind name hiragana buyPrice sellPrice dungeons
+    List.range (Tuple.first remainingRange) (Tuple.second remainingRange)
+        |> List.map
+            (\remaining ->
+                Item.newConsumable kind name hiragana buyPrice buyIncrement sellPrice sellIncrement remaining dungeons
+            )
 
 
 bracelets : List Item
@@ -160,7 +163,7 @@ vases : List Item
 vases =
     let
         gen =
-            newConsumable Vase
+            newConsumables ( 0, 6 ) Vase
     in
     [ gen "回復の壺" "かいふくのつぼ" 1000 50 500 25 True
     , gen "水がめ" "みずがめ" 1000 50 500 25 True
@@ -177,13 +180,14 @@ vases =
     , gen "祝福の壺" "しゅくふくのつぼ" 5000 250 2000 100 True
     , gen "強化の壺" "きょうかのつぼ" 15000 750 7500 375 True
     ]
+        |> List.concat
 
 
 wands : List Item
 wands =
     let
         gen =
-            newConsumable Wand
+            newConsumables ( 0, 7 ) Wand
     in
     [ gen "ふきとばしの杖" "ふきとばしのつえ" 500 25 200 10 True
     , gen "イカリの杖" "いかりのつえ" 800 40 400 20 True
@@ -211,4 +215,4 @@ wands =
     , gen "しあわせの杖" "しあわせのつえ" 3000 150 1500 75 True
     , gen "不幸の杖" "ふこうのつえ" 3000 300 1500 150 True
     ]
-
+        |> List.concat

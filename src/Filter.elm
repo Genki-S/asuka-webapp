@@ -33,7 +33,7 @@ toFilterFunc f item =
         FreeTextFilter s ->
             case String.toInt s of
                 Just price ->
-                    price == Item.buyPrice item || price == Item.sellPrice item
+                    price == Item.calculateBuyPrice item || price == Item.calculateSellPrice item
 
                 Nothing ->
                     String.contains s (Item.name item) || String.contains s (Item.hiraganaName item)
