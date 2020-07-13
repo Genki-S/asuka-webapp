@@ -33,7 +33,18 @@ toFilterFunc f item =
         FreeTextFilter s ->
             case String.toInt s of
                 Just price ->
-                    price == Item.calculateBuyPrice item || price == Item.calculateSellPrice item
+                    let
+                        allowedError =
+                            2
+
+                        targetPrices =
+                            [ Item.calculateBuyPrice item, Item.calculateSellPrice item ]
+                                -- 呪い / 祝福
+                                |> List.map (\p -> [ round (toFloat p * 0.9), p, round (toFloat p * 1.1) ])
+                                |> List.concat
+                    in
+                    targetPrices
+                        |> List.any (\target -> abs (target - price) <= allowedError)
 
                 Nothing ->
                     String.contains s (Item.name item) || String.contains s (Item.hiraganaName item)
