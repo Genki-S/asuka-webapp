@@ -369,6 +369,7 @@ viewItems model =
                 [ thead [ class "thead-dark" ]
                     [ th [] [ text "種別" ]
                     , th [] [ text "名前" ]
+                    , th [] [ text "残" ]
                     , th [] [ text "買値" ]
                     , th [] [ text "売値" ]
                     , th [] [ text "識別済" ]
@@ -390,8 +391,16 @@ viewItemRow model item =
     tr []
         [ td [] [ text (i.kind |> Item.kindToString) ]
         , td [] [ text i.name ]
-        , td [] [ text (String.fromInt i.buyPrice) ]
-        , td [] [ text (String.fromInt i.sellPrice) ]
+        , td []
+            [ case i.remaining of
+                Just r ->
+                    text (String.fromInt r)
+
+                Nothing ->
+                    text "-"
+            ]
+        , td [] [ text (String.fromInt (Item.calculateBuyPrice item)) ]
+        , td [] [ text (String.fromInt (Item.calculateSellPrice item)) ]
         , td []
             [ input
                 [ type_ "checkbox"
