@@ -1,3 +1,3 @@
-# トルネコ3用便利ツール
+# Asuka Webapp
 
-https://genki-s.github.io/toruneko-3-tools/
+https://genki-s.github.io/asuka-webapp/

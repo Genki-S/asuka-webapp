@@ -3,7 +3,6 @@ port module Main exposing (Model, Msg(..), init, main, update, view)
 import Browser
 import Css exposing (..)
 import Dungeon exposing (Dungeon(..))
-import ExperienceTable
 import Filter exposing (Filter(..))
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
@@ -53,11 +52,11 @@ init flags =
       , showCredit = True
       , identifiedItemNames = flags.identifiedItemNames
       , filterGroups =
-            [ { id = IdentifiedStateFilters
+            [ { id = DungeonFilters
               , filterItems =
-                    [ { id = FilterAnotherWorldItems
-                      , displayName = "異世界"
-                      , toImpl = \ingredients -> DungeonFilter AnotherWorld
+                    [ { id = FilterUrahakuItems
+                      , displayName = "裏白"
+                      , toImpl = \ingredients -> DungeonFilter Urahaku
                       , enabled = False
                       }
                     ]
@@ -88,9 +87,9 @@ init flags =
                       , toImpl = \_ -> ItemKindFilter Herb
                       , enabled = False
                       }
-                    , { id = FilterRings
-                      , displayName = "指輪"
-                      , toImpl = \_ -> ItemKindFilter Ring
+                    , { id = FilterBracelets
+                      , displayName = "腕輪"
+                      , toImpl = \_ -> ItemKindFilter Bracelet
                       , enabled = False
                       }
                     , { id = FilterWands
@@ -113,7 +112,6 @@ init flags =
 
 type Page
     = PageItemInventory
-    | PageExperienceTable
 
 
 type alias FilterIngredients =
@@ -134,10 +132,10 @@ type FilterItemID
     | FilterNonIdentifiedItems
     | FilterScrolls
     | FilterHerbs
-    | FilterRings
+    | FilterBracelets
     | FilterWands
     | FilterVases
-    | FilterAnotherWorldItems
+    | FilterUrahakuItems
 
 
 type alias FilterGroup =
@@ -240,9 +238,6 @@ view model =
         , case model.currentPage of
             PageItemInventory ->
                 viewItemInventory model
-
-            PageExperienceTable ->
-                viewExperienceTable model
         ]
 
 
@@ -255,17 +250,10 @@ viewHeader model =
 
             else
                 "nav-item"
-
-        experienceLinkClass =
-            if model.currentPage == PageExperienceTable then
-                "nav-item active"
-
-            else
-                "nav-item"
     in
     nav [ class "navbar navbar-dark bg-dark" ]
         [ span [ class "navbar-brand" ]
-            [ text "トルネコ3ツール" ]
+            [ text "Asuka Webapp" ]
         , button [ attribute "aria-controls" "navbarSupportedContent", attribute "aria-expanded" "false", attribute "aria-label" "Toggle navigation", class "navbar-toggler", attribute "data-target" "#navbarSupportedContent", attribute "data-toggle" "collapse", type_ "button" ]
             [ span [ class "navbar-toggler-icon" ]
                 []
@@ -277,10 +265,6 @@ viewHeader model =
                         [ text "アイテム検索/管理"
                         ]
                     ]
-                , li [ class experienceLinkClass ]
-                    [ a [ class "nav-link", href "#", onClick (ChangePage PageExperienceTable) ]
-                        [ text "経験値表" ]
-                    ]
                 ]
             ]
         ]
@@ -289,12 +273,9 @@ viewHeader model =
 viewCredit : Html Msg
 viewCredit =
     div [ class "alert alert-dismissible alert-info" ]
-        [ text "本アプリは2020/07/10時点での"
-        , a [ href "https://www.pegasusknight.com/mb/tr3/index.html" ]
-            [ text "www.pegasusknight.com" ]
-        , text "様及び"
-        , a [ href "https://w.atwiki.jp/toruneko3/" ]
-            [ text "トルネコの大冒険３異世界攻略wiki" ]
+        [ text "本アプリは2020/07/13時点での"
+        , a [ href "http://asuka.lsx3.com/" ]
+            [ text "風来のシレン外伝 女剣士アスカ見参！ 攻略Wiki" ]
         , text "様の情報を元に作成されました"
         , button [ class "close", onClick HideCredit ] [ text "×" ]
         ]
@@ -388,6 +369,7 @@ viewItems model =
                 [ thead [ class "thead-dark" ]
                     [ th [] [ text "種別" ]
                     , th [] [ text "名前" ]
+                    , th [] [ text "残" ]
                     , th [] [ text "買値" ]
                     , th [] [ text "売値" ]
                     , th [] [ text "識別済" ]
@@ -409,8 +391,16 @@ viewItemRow model item =
     tr []
         [ td [] [ text (i.kind |> Item.kindToString) ]
         , td [] [ text i.name ]
-        , td [] [ text (String.fromInt i.buyPrice) ]
-        , td [] [ text (String.fromInt i.sellPrice) ]
+        , td []
+            [ case i.remaining of
+                Just r ->
+                    text (String.fromInt r)
+
+                Nothing ->
+                    text "-"
+            ]
+        , td [] [ text (String.fromInt (Item.calculateBuyPrice item)) ]
+        , td [] [ text (String.fromInt (Item.calculateSellPrice item)) ]
         , td []
             [ input
                 [ type_ "checkbox"
@@ -420,53 +410,6 @@ viewItemRow model item =
                 ]
                 []
             ]
-        ]
-
-
-viewExperienceTable : Model -> Html Msg
-viewExperienceTable model =
-    let
-        torunekoTable =
-            ExperienceTable.toruneko
-
-        poporoTable =
-            ExperienceTable.poporo
-
-        zipped =
-            List.map2 Tuple.pair torunekoTable poporoTable
-                |> List.indexedMap Tuple.pair
-                |> List.map (Tuple.mapFirst (\i -> i + 1))
-    in
-    Html.Styled.table [ class "table item-table", css [ marginTop (px 5) ] ]
-        [ thead [ class "thead-dark" ]
-            [ th [] [ text "レベル" ]
-            , th [] [ text "トルネコ" ]
-            , th [] [ text "ポポロ" ]
-            ]
-        , tbody []
-            (List.map viewExperienceRow zipped)
-        ]
-
-
-viewExperienceRow : ( Int, ( Int, Int ) ) -> Html Msg
-viewExperienceRow data =
-    let
-        level =
-            Tuple.first data
-
-        exp =
-            Tuple.second data
-
-        toruneko =
-            Tuple.first exp
-
-        poporo =
-            Tuple.second exp
-    in
-    tr []
-        [ td [] [ text (String.fromInt level) ]
-        , td [] [ text (String.fromInt toruneko) ]
-        , td [] [ text (String.fromInt poporo) ]
         ]
 
 
