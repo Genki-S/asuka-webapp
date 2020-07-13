@@ -88,7 +88,7 @@ init flags =
                       , enabled = False
                       }
                     , { id = FilterBracelets
-                      , displayName = "指輪"
+                      , displayName = "腕輪"
                       , toImpl = \_ -> ItemKindFilter Bracelet
                       , enabled = False
                       }
